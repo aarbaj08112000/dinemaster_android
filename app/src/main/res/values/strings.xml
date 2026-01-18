@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Dine Master</string>
+    <string name="please_enter_your_registered_email_to_receive_password_reset_instructions">Please enter your registered email to receive password reset instructions</string>
+    <string name="send">Send</string>
+    <string name="enter_your_email">Enter your email</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="back">Back</string>
+    <string name="home">Home</string>
+    <string name="add_order">Add Order</string>
+    <string name="order">Orders</string>
+    <string name="order_list">Order List</string>
+    <string name="profile">Profile</string>
+    <string name="menu">Menu</string>
+    <string name="welcome_to">Welcome to</string>
+    <string name="dine_master">Dine Master</string>
+    <string name="email">Email</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="enter_new_password">Enter New password</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="forgot_password_">Forgot Password?</string>
+    <string name="new_password">New Password</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="please_create_a_strong_password_and_confirm_it_below">Please create a strong password and confirm it below.</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="re_enter_password">Re-enter password</string>
+</resources>

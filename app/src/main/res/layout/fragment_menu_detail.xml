@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+   >
+
+    <!-- Food Image (top) -->
+    <ImageView
+        android:id="@+id/ivFoodImage"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/food"
+        android:background="@drawable/top_rounded"
+        android:elevation="6dp" />
+
+    <!-- Card Section -->
+    <LinearLayout
+        android:id="@+id/detailsCard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ivFoodImage"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:padding="20dp">
+
+        <!-- Food Name & Quantity Selector in one row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="8dp">
+
+            <!-- Left Side (Food Name + Subtitle) -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvFoodName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Seafood Spaghetti"
+                    android:textSize="20sp"
+                    style="@style/TextSemiBoldPoppins"
+                    />
+
+                <TextView
+                    android:id="@+id/tvSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Shrimp &amp; Hot Pepper"
+                    style="@style/TextNormalPoppinsLightGray"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Right Side (Quantity Selector) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="4dp"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/btnMinus"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/btn_bg_round"
+                    android:src="@drawable/ic_minus"
+                    android:scaleType="centerInside"
+                    app:tint="@color/black" />
+
+                <TextView
+                    android:id="@+id/tvQty"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textSize="16sp"
+                    style="@style/TextSemiBoldPoppins"
+                     />
+
+                <ImageButton
+                    android:id="@+id/btnPlus"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/btn_bg_round"
+                    android:src="@drawable/ic_add"
+                    android:scaleType="centerInside"
+                    app:tint="@color/black" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Proin sit amet ante non velit tempor placerat et ac felis. In sollicitudin orci eget..."
+            android:lineSpacingExtra="2dp"
+            style="@style/TextNormalPoppins"
+            android:layout_marginTop="16dp" />
+
+        <!-- Price & Add to Cart -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="24dp">
+
+            <TextView
+                android:id="@+id/tvPrice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="$28.00"
+                style="@style/TextSemiBoldPoppins"
+                android:textSize="18sp"
+                android:textColor="#FF6B00" />
+
+            <Button
+                android:id="@+id/btnAddToCart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add To Cart"
+                style="@style/ButtonPrimary"
+                android:paddingHorizontal="20dp"
+                />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

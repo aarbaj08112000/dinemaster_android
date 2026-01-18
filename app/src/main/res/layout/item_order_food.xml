@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/bottom_border"
+    android:padding="12dp"
+    android:gravity="center_vertical">
+
+    <!-- Delete Icon (Left) -->
+    <ImageButton
+        android:id="@+id/btnDelete"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_delete"
+        android:background="@android:color/transparent"
+        android:padding="6dp"
+        app:tint="@android:color/holo_red_dark" />
+
+
+    <!-- Food Name -->
+    <TextView
+        android:id="@+id/tvFoodName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingStart="5dp"
+        android:text="Paneer Butter Masala"
+        android:textSize="16sp"
+        style="@style/TextSemiBoldPoppins"
+        android:textColor="@color/black" />
+
+    <!-- Quantity Control -->
+    <LinearLayout
+        android:id="@+id/llQuantityControl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <!-- Minus Button -->
+        <ImageButton
+            android:id="@+id/btnMinus"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/btn_bg_round"
+            android:backgroundTint="@color/color_secondary"
+            android:src="@drawable/ic_minus"
+            android:scaleType="centerInside"
+            android:padding="6dp"
+            app:tint="@color/black" />
+
+        <!-- Quantity -->
+        <TextView
+            android:id="@+id/tvQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            style="@style/TextSemiBoldPoppins"
+            android:padding="8dp" />
+
+        <!-- Plus Button -->
+        <ImageButton
+            android:id="@+id/btnPlus"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/btn_bg_round"
+            android:backgroundTint="@color/color_secondary"
+            android:src="@drawable/ic_add"
+            android:scaleType="centerInside"
+            android:padding="6dp"
+            app:tint="@color/black" />
+
+    </LinearLayout>
+</LinearLayout>

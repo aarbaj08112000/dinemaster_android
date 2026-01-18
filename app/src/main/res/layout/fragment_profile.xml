@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#F2F7FA"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Top Gradient Background -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+
+            android:background="@drawable/bg_gradient_header">
+
+            <!-- Profile Image -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cvProfile"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="40dp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="60dp"
+                android:layout_centerHorizontal="true"
+                app:strokeColor="@android:color/transparent"
+                app:strokeWidth="0dp">
+
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/user_img"
+                android:scaleType="centerCrop"
+               />
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <!-- Name -->
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cvProfile"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:text="Jonathon Patricson"
+               style="@style/TextSemiBoldPoppins"
+                android:textColor="@android:color/white" />
+
+            <!-- Role -->
+            <TextView
+                android:id="@+id/tvRole"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvName"
+                android:layout_centerHorizontal="true"
+                android:text="UI/UX Designer | Frontend Developer"
+                style="@style/TextMediumPoppins"
+                android:textColor="@android:color/white" />
+
+            <!-- Location -->
+            <TextView
+                android:id="@+id/tvLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvRole"
+                android:layout_centerHorizontal="true"
+                android:text="📍 Comilla, Bangladesh"
+                style="@style/TextMediumPoppins"
+                android:textColor="@android:color/white" />
+
+        </RelativeLayout>
+
+        <!-- Stats Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@android:color/white"
+            android:padding="16dp"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2332"
+                    android:textSize="18sp"
+                    style="@style/TextSemiBoldPoppins"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Today Order"
+                   style="@style/TextNormalPoppins"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="732"
+                    android:textSize="18sp"
+                    style="@style/TextSemiBoldPoppins"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Last 7 days order"
+                    style="@style/TextNormalPoppins"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="332"
+                    android:textSize="18sp"
+                    style="@style/TextSemiBoldPoppins"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total Order"
+                    style="@style/TextNormalPoppins"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- About Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@android:color/white"
+            android:padding="16dp"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:text="About Jonathon"
+                android:layout_width="wrap_content"
+                android:textSize="16sp"
+               style="@style/TextSemiBoldPoppins"
+                android:layout_marginBottom="8dp" android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat."
+               style="@style/TextNormalPoppins"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <!-- Follow Button -->
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center"
+            android:text="Logout"
+            style="@style/ButtonPrimary"
+            />
+
+    </LinearLayout>
+</ScrollView>

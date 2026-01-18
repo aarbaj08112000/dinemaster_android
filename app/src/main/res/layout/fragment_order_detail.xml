@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:elevation="0dp"
+    android:background="#F9F9F9"
+   >
+
+    <!-- Header Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="5dp"
+        android:elevation="0dp"
+        app:cardElevation="0dp"
+        android:layout_marginBottom="12dp"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:elevation="0dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvOrderDetailHeader"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Order #123 Details"
+                android:textSize="20sp"
+                style="@style/TextSemiBoldPoppins"
+                 />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAddFoodItem"
+                style="@style/ButtonSecondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Item"
+                 />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Table & Status -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="5dp"
+        android:layout_marginBottom="12dp"
+        app:cardElevation="0dp"
+        android:padding="12dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <!-- Table No (Left) -->
+            <TextView
+                android:id="@+id/tvTableNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Table No: 5"
+                style="@style/TextMediumPoppins"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <!-- Status (Center) -->
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Served"
+                style="@style/TextSemiBoldPoppins"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:textColor="@android:color/holo_green_dark"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.5" />
+
+            <!-- Edit Icon (Right) -->
+            <ImageView
+                android:id="@+id/ivEdit"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_edit"
+                android:padding="4dp"
+                app:tint="@color/color_primary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+
+
+    <!-- Food Items List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFoodItems"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:listitem="@layout/item_food"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp" />
+
+    <!-- GST + Total -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="0dp"
+        android:layout_marginTop="12dp"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvSubtotal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Subtotal: ₹500"
+               style="@style/TextMediumPoppins"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tvGST"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GST (5%): ₹25"
+                style="@style/TextMediumPoppins"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/tvTotal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Total: ₹525"
+               style="@style/TextSemiBoldPoppins"
+                android:textSize="20sp"
+                android:textColor="@color/color_primary" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Download Invoice Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnDownloadInvoice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Download Invoice"
+        style="@style/ButtonPrimary"
+        android:visibility="gone"
+         />
+
+</LinearLayout>

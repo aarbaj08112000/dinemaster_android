@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+   >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- 🔹 Top Bar -->
+        <RelativeLayout
+            android:id="@+id/rlTopBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp">
+
+            <TextView
+                android:id="@+id/tvWelcome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hi Staff"
+                android:textSize="20sp"
+                style="@style/TextBoldPoppins" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvProfile"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/color_primary">
+
+                <ImageView
+                    android:id="@+id/ivProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_profile_menu"
+                    android:padding="6dp"
+                    app:tint="#fb8c00"
+                    android:scaleType="centerInside"/>
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+
+        <!-- 🔹 Quick Stats -->
+        <LinearLayout
+            android:id="@+id/llQuickStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:paddingBottom="16dp">
+
+            <!-- Orders -->
+            <LinearLayout
+                android:id="@+id/llOrders"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/card_bg"
+                android:padding="12dp"
+                android:layout_marginEnd="6dp">
+
+                <TextView
+                    android:id="@+id/tvOrdersLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Orders"
+                    style="@style/TextNormalPoppinsLightGray"
+                    />
+
+                <TextView
+                    android:id="@+id/tvOrders"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="120"
+                    android:textSize="20sp"
+                    style="@style/TextSemiBoldPoppins"
+                     />
+            </LinearLayout>
+
+            <!-- Revenue -->
+            <LinearLayout
+                android:id="@+id/llRevenue"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/card_bg"
+                android:padding="12dp"
+                android:layout_marginHorizontal="6dp">
+
+                <TextView
+                    android:id="@+id/tvRevenueLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Revenue"
+                    style="@style/TextNormalPoppinsLightGray"
+                    />
+
+                <TextView
+                    android:id="@+id/tvRevenue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="₹25,340"
+                    android:textSize="20sp"
+                    style="@style/TextSemiBoldPoppins" />
+            </LinearLayout>
+
+            <!-- Tables -->
+            <LinearLayout
+                android:id="@+id/llTables"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/card_bg"
+                android:padding="12dp"
+                android:layout_marginStart="6dp">
+
+                <TextView
+                    android:id="@+id/tvTablesLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tables"
+                    style="@style/TextNormalPoppinsLightGray" />
+
+                <TextView
+                    android:id="@+id/tvTables"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15"
+                    android:textSize="20sp"
+                    style="@style/TextSemiBoldPoppins"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 🔹 Quick Actions -->
+        <TextView
+            android:id="@+id/tvQuickActionsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quick Actions"
+            android:textSize="16sp"
+            style="@style/TextSemiBoldPoppins"
+            android:paddingBottom="8dp" />
+
+        <GridLayout
+            android:id="@+id/glQuickActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:alignmentMode="alignMargins"
+            android:useDefaultMargins="true">
+
+            <!-- Menu -->
+            <LinearLayout
+                android:id="@+id/llMenu"
+                android:layout_width="0dp"
+                android:layout_height="110dp"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/card_bg">
+
+                <ImageView
+                    android:id="@+id/ivMenu"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_menu"
+                    app:tint="#fb8c00" />
+
+                <TextView
+                    android:id="@+id/tvMenu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Menu"
+                   style="@style/TextSemiBoldPoppins"
+                    android:paddingTop="6dp" />
+            </LinearLayout>
+
+            <!-- New Order -->
+            <LinearLayout
+                android:id="@+id/llNewOrder"
+                android:layout_width="0dp"
+                android:layout_height="110dp"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/card_bg">
+
+                <ImageView
+                    android:id="@+id/ivNewOrder"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_add"
+                    app:tint="#fb8c00" />
+
+                <TextView
+                    android:id="@+id/tvNewOrder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="New Order"
+                    style="@style/TextSemiBoldPoppins"
+                    android:paddingTop="6dp" />
+            </LinearLayout>
+
+            <!-- Scan QR -->
+            <LinearLayout
+                android:id="@+id/llScanQR"
+                android:layout_width="0dp"
+                android:layout_height="110dp"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/card_bg">
+
+                <ImageView
+                    android:id="@+id/ivScanQR"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_qr_code"
+                    app:tint="#fb8c00" />
+
+                <TextView
+                    android:id="@+id/tvScanQR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Scan QR"
+                    style="@style/TextSemiBoldPoppins"
+                    android:paddingTop="6dp" />
+            </LinearLayout>
+
+            <!-- Orders Menu -->
+            <LinearLayout
+                android:id="@+id/llOrdersMenu"
+                android:layout_width="0dp"
+                android:layout_height="110dp"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/card_bg">
+
+                <ImageView
+                    android:id="@+id/ivOrdersMenu"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_orders_menu"
+                    app:tint="#fb8c00" />
+
+                <TextView
+                    android:id="@+id/tvOrdersMenu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Order"
+                    style="@style/TextSemiBoldPoppins"
+                    android:paddingTop="6dp" />
+            </LinearLayout>
+
+            <!-- Profile -->
+            <LinearLayout
+                android:id="@+id/llProfileAction"
+                android:layout_width="0dp"
+                android:layout_height="110dp"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/card_bg">
+
+                <ImageView
+                    android:id="@+id/ivProfileAction"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_profile_menu"
+                    app:tint="#fb8c00" />
+
+                <TextView
+                    android:id="@+id/tvProfileAction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile"
+                    style="@style/TextSemiBoldPoppins"
+                    android:paddingTop="6dp" />
+            </LinearLayout>
+
+            <!-- Hotel Info -->
+            <LinearLayout
+                android:id="@+id/llHotelInfo"
+                android:layout_width="0dp"
+                android:layout_height="110dp"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/card_bg">
+
+                <ImageView
+                    android:id="@+id/ivHotelInfo"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_hotel_info"
+                    app:tint="#fb8c00" />
+
+                <TextView
+                    android:id="@+id/tvHotelInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hotel Info"
+                    style="@style/TextSemiBoldPoppins"
+                    android:paddingTop="6dp" />
+            </LinearLayout>
+
+        </GridLayout>
+
+    </LinearLayout>
+</ScrollView>

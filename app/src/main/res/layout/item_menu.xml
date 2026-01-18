@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:layout_margin="2dp"
+    android:background="@drawable/card_bg">
+    <androidx.cardview.widget.CardView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp">
+
+        <ImageView
+            android:id="@+id/imgFoodItem"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="false"
+            android:scaleType="fitXY"
+            android:src="@drawable/food"/>
+    </androidx.cardview.widget.CardView>
+
+
+
+
+    <TextView
+        android:id="@+id/tvMenuName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Garlic Bread"
+        style="@style/TextSemiBoldPoppins"
+        android:paddingTop="4dp"
+        />
+
+    <TextView
+        android:id="@+id/tvPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$5.00"
+        android:textSize="12sp"
+        style="@style/TextNormalPoppinsLightGray"
+        />
+
+    <!-- Quantity Controls -->
+    <LinearLayout
+        android:id="@+id/llQuantityControl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingTop="4dp">
+
+        <!-- Minus Button -->
+        <ImageButton
+            android:id="@+id/btnMinus"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:backgroundTint="@color/color_secondary"
+            android:background="@drawable/btn_bg_round"
+            android:src="@drawable/ic_minus"
+            android:scaleType="centerInside"
+            android:padding="6dp"
+            app:tint="@color/black" />
+
+        <TextView
+            android:id="@+id/tvQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            style="@style/TextSemiBoldPoppins"
+            android:padding="8dp"
+            />
+
+        <!-- Plus Button -->
+        <ImageButton
+            android:id="@+id/btnPlus"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:backgroundTint="@color/color_secondary"
+            android:background="@drawable/btn_bg_round"
+            android:src="@drawable/ic_add"
+            android:scaleType="centerInside"
+            android:padding="6dp"
+            app:tint="@color/black" />
+    </LinearLayout>
+
+</LinearLayout>
