@@ -6,6 +6,9 @@ import android.util.Patterns
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import com.example.dinemaster.databinding.ActivityLoginBinding
+import com.example.dinemaster.helper.LoaderHelper
+import com.example.dinemaster.helper.RetrofitClient
+import com.example.dinemaster.helper.showSnackbar
 import com.example.dinemaster.model.LoginRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -45,6 +48,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun callLoginApi(email: String, password: String) {
+        LoaderHelper.showLoader(this)
         lifecycleScope.launch {
             try {
                 val response = RetrofitClient.api.login(LoginRequest(email, password))
@@ -72,6 +76,9 @@ class LoginActivity : AppCompatActivity() {
 
             } catch (e: Exception) {
                 showSnackbar("Error: ${e.message}", isError = true)
+            }
+            finally {
+                LoaderHelper.hideLoader() // Always hide loader
             }
         }
     }

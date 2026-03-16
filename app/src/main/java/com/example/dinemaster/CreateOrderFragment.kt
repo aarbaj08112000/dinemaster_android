@@ -5,12 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dinemaster.adapter.MenuAdapter
+import com.example.dinemaster.helper.showSnackbar
 import com.example.dinemaster.model.MenuItem
 import com.google.android.material.button.MaterialButton
 

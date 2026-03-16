@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.dinemaster.databinding.ActivityOtpBinding
+import com.example.dinemaster.helper.showSnackbar
 
 class OtpActivity : AppCompatActivity() {
     private lateinit var binding: ActivityOtpBinding

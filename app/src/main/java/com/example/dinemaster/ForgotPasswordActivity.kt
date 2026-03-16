@@ -3,11 +3,19 @@ package com.example.dinemaster
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.lifecycleScope
 import com.example.dinemaster.databinding.ActivityForgotPasswordBinding
+import com.example.dinemaster.helper.LoaderHelper
+import com.example.dinemaster.helper.RetrofitClient
+import com.example.dinemaster.helper.showSnackbar
+import com.example.dinemaster.model.ForgotPasswordRequest
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class ForgotPasswordActivity : AppCompatActivity() {
     private lateinit var binding: ActivityForgotPasswordBinding
@@ -69,11 +77,52 @@ class ForgotPasswordActivity : AppCompatActivity() {
                 }
 
                 else -> {
-                    showSnackbar("Password reset successful", isError = false)
-                    val intent = Intent(this, LoginActivity::class.java)
-                    startActivity(intent)
-                    finish()
+//                    showSnackbar("Password reset successful", isError = false)
+//                    val intent = Intent(this, LoginActivity::class.java)
+//                    startActivity(intent)
+//                    finish()
+                    forgotPasswordApi(email, password)
                 }
+            }
+        }
+    }
+
+    private fun forgotPasswordApi(
+        email: String,
+        password: String,
+    ) {
+        LoaderHelper.showLoader(this)
+        lifecycleScope.launch {
+
+            try {
+                val request = ForgotPasswordRequest(
+                    email = email,
+                    password = password,
+                )
+
+                val response = RetrofitClient.api.forgotPassword(request)
+                if (response.isSuccessful && response.body()?.settings?.success == true) {
+
+                    showSnackbar(
+                        response.body()?.settings?.message ?: "Password updated successfully",
+                        false
+                    )
+                    delay(1000)
+                    startActivity(Intent(this@ForgotPasswordActivity, LoginActivity::class.java))
+                    finish()
+
+                } else {
+                    showSnackbar(
+                        response.body()?.settings?.message ?: "Something went wrong",
+                        true
+                    )
+                }
+
+            } catch (e: Exception) {
+                showSnackbar("Server error: ${e.localizedMessage}", true)
+            }
+            finally {
+                LoaderHelper.hideLoader() // Always hide loader
             }
         }
     }

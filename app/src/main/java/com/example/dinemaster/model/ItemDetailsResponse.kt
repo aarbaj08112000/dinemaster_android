@@ -1,6 +1,6 @@
 package com.example.dinemaster.model
 
-data class MenuItemResponse(
+data class ItemDetailsResponse(
     val settings: Settings,
-    val data: List<MenuItemApi>
+    val data: MenuItemDetails
 )

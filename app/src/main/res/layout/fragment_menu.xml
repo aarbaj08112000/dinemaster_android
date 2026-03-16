@@ -56,8 +56,8 @@
             android:layout_height="wrap_content"
             android:text="Non-Veg"
             android:fontFamily="@font/poppins_medium"
-            android:textColor="#E57373"
-            android:buttonTint="#E57373" />
+            android:textColor="@color/snackbar_error_bg"
+            android:buttonTint="@color/snackbar_error_bg" />
 
     </LinearLayout>
 

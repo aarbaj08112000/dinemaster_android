@@ -5,11 +5,6 @@ data class LoginResponse(
     val data: UserData
 )
 
-data class Settings(
-    val success: Boolean,
-    val message: String
-)
-
 data class UserData(
     val id: String,
     val token: String,

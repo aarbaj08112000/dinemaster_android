@@ -1,10 +1,10 @@
-package com.example.dinemaster
+package com.example.dinemaster.helper
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "https://dinemaster.codecrafterinfotech.online/WS/auth/" // change this
+    private const val BASE_URL = "https://dinemaster.codecrafterinfotech.online/WS/" // change this
 
     val api: ApiService by lazy {
         Retrofit.Builder()

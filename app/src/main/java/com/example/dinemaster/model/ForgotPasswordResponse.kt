@@ -1,6 +1,6 @@
 package com.example.dinemaster.model
 
-data class MenuItemResponse(
+data class ForgotPasswordResponse(
     val settings: Settings,
-    val data: List<MenuItemApi>
+    val data: List<Any>
 )

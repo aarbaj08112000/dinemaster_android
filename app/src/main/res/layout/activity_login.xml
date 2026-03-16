@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/enter_your_email"
                 style="@style/EditTextPoppins"
-                android:text="test@gmail.com"
+                android:text="adrienne.schaden@gmail.com"
                 android:padding="12dp"
                 android:background="@drawable/edittext_border" />
 

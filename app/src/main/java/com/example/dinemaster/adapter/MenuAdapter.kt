@@ -22,6 +22,7 @@ class MenuAdapter(
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivFood: ImageView = itemView.findViewById(R.id.imgFoodItem)
+        val imgVegType: ImageView = itemView.findViewById(R.id.imgVegType)
         val tvName: TextView = itemView.findViewById(R.id.tvMenuName)
         val tvPrice: TextView = itemView.findViewById(R.id.tvPrice)
         val tvQty: TextView = itemView.findViewById(R.id.tvQuantity)
@@ -31,14 +32,20 @@ class MenuAdapter(
 
         fun bind(item: MenuItemApi) {
             ivFood.load(item.image_url) {
-                placeholder(R.drawable.food)
-                error(R.drawable.food)
+                placeholder(R.drawable.food_placeholder)
+                error(R.drawable.food_placeholder)
             }
+
 
             tvName.text = item.name
             tvPrice.text = "₹%.2f".format(item.base_price.toDouble())
             tvQty.text = item.qty.toString()
-
+            imgVegType.setImageResource(
+                if (item.veg_type.equals("VEG", true))
+                    R.drawable.ic_veg
+                else
+                    R.drawable.ic_nonveg
+            )
             llQuantityControl.visibility =
                 if (mode.equals(MenuFragment.MODE_EDIT, true)) View.VISIBLE else View.GONE
 
