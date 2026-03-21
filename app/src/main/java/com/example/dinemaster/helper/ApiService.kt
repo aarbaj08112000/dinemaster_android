@@ -10,9 +10,15 @@ import com.example.dinemaster.model.LoginRequest
 import com.example.dinemaster.model.LoginResponse
 import com.example.dinemaster.model.MenuItemResponse
 import com.example.dinemaster.model.MenuRequest
+import com.example.dinemaster.model.OrderDetailsResponse
+import com.example.dinemaster.model.OrdersResponse
+import com.example.dinemaster.model.RestaurantResponse
+import com.example.dinemaster.model.UserDetailsResponse
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -40,4 +46,25 @@ interface ApiService {
     suspend fun getItemDetails(
         @Body request: ItemDetailsRequest
     ): ItemDetailsResponse
+
+    @POST("user_login/get_restaurant_details")
+    suspend fun getRestaurantDetails(
+//        @Header("Authorization") token: String,
+        @Body body: Map<String, String>
+    ): RestaurantResponse
+
+    @POST("user_login/get_user_details")
+    suspend fun getUserDetails(
+        @Body params: Map<String, String>
+    ): UserDetailsResponse
+
+    @POST("gets_orders")
+    suspend fun getOrders(
+        @Body params: Map<String, String>
+    ): OrdersResponse
+
+    @POST("get_order_details")
+    suspend fun getOrderDetails(
+        @Body body: Map<String, String>
+    ): OrderDetailsResponse
 }

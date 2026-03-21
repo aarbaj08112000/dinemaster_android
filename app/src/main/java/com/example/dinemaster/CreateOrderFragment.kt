@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dinemaster.adapter.MenuAdapter
 import com.example.dinemaster.helper.showSnackbar
 import com.example.dinemaster.model.MenuItem
+import com.example.dinemaster.model.MenuItemApi
 import com.google.android.material.button.MaterialButton
 
 class CreateOrderFragment : Fragment() {
@@ -24,7 +26,7 @@ class CreateOrderFragment : Fragment() {
     private lateinit var etTableNo: EditText
     private lateinit var menuAdapter: MenuAdapter
 
-    private val selectedItems = mutableListOf<MenuItem>()
+    private val selectedItems = mutableListOf<MenuItemApi>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,19 +43,19 @@ class CreateOrderFragment : Fragment() {
         btnAddMenu = view.findViewById(R.id.btnAddMenu)
         etTableNo = view.findViewById(R.id.etTableNo)
 
-        val items = arguments?.getSerializable("order_items") as? ArrayList<MenuItem>
+        val items = arguments?.getSerializable("order_items") as? ArrayList<MenuItemApi>
         items?.let { selectedItems.addAll(it) }
 
         rvSelectedMenu.layoutManager = GridLayoutManager(requireContext(), 2)
         val mode = arguments?.getString(MenuFragment.ARG_MODE)?.ifBlank { MenuFragment.MODE_EDIT }
             ?: MenuFragment.MODE_EDIT
 
-//        menuAdapter = MenuAdapter(selectedItems, mode,
-//            onItemClick = { item ->
-//                Toast.makeText(requireContext(), "Clicked: ${item.name}", Toast.LENGTH_SHORT).show()
-//            },
-//            onQtyChange = { updateUI() }
-//        )
+        menuAdapter = MenuAdapter(selectedItems, mode,
+            onItemClick = { item ->
+                Toast.makeText(requireContext(), "Clicked: ${item.name}", Toast.LENGTH_SHORT).show()
+            },
+            onQtyChange = { updateUI() }
+        )
         rvSelectedMenu.adapter = menuAdapter
 
         btnAddMenu.setOnClickListener {
@@ -95,7 +97,7 @@ class CreateOrderFragment : Fragment() {
             tvEmptyMessage.visibility = View.GONE
 
             val totalItems = selectedItems.sumOf { it.qty }
-            val totalPrice = selectedItems.sumOf { it.qty * it.price }
+            val totalPrice = selectedItems.sumOf { it.qty.toDouble() * it.base_price.toDouble() }
             tvSummary.text = "$totalItems items | ₹%.2f".format(totalPrice)
 
             menuAdapter.notifyDataSetChanged()

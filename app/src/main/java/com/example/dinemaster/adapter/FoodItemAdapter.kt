@@ -8,8 +8,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dinemaster.R
 import com.example.dinemaster.model.FoodItem
+import com.example.dinemaster.model.OrderItemData
 
-class FoodItemAdapter(private val items: List<FoodItem>) :
+class FoodItemAdapter(private val items: List<OrderItemData>) :
     RecyclerView.Adapter<FoodItemAdapter.FoodViewHolder>() {
 
     inner class FoodViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -25,12 +26,18 @@ class FoodItemAdapter(private val items: List<FoodItem>) :
     }
 
     override fun onBindViewHolder(holder: FoodViewHolder, position: Int) {
+
         val item = items[position]
-        holder.tvFoodName.text = item.name
-        holder.tvQty.text = "Qty: ${item.qty}"
-        holder.tvPrice.text = "₹${item.price}"
+
+        val qty = item.quantity.toDouble().toInt()
+        val price = item.unit_price.toDouble()
+
+        holder.tvFoodName.text = item.item_name
+        holder.tvQty.text = "Qty: $qty"
+
+        val total = qty * price
+        holder.tvPrice.text = "₹$total"
     }
 
     override fun getItemCount(): Int = items.size
 }
-

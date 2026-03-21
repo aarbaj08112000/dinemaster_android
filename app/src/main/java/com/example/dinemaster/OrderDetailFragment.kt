@@ -8,103 +8,140 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dinemaster.adapter.FoodItemAdapter
+import com.example.dinemaster.helper.LoaderHelper
+import com.example.dinemaster.helper.RetrofitClient
 import com.example.dinemaster.model.FoodItem
+import com.example.dinemaster.model.OrderItemData
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.launch
 
 class OrderDetailFragment : Fragment() {
 
     private lateinit var ivEdit: ImageView
-    private lateinit var foodItems: List<FoodItem>
+    private lateinit var rvFoodItems: RecyclerView
 
-    @SuppressLint("MissingInflatedId")
+    private lateinit var tvOrderDetailHeader: TextView
+    private lateinit var tvTableNo: TextView
+    private lateinit var tvStatus: TextView
+    private lateinit var tvSubtotal: TextView
+    private lateinit var tvGST: TextView
+    private lateinit var tvTotal: TextView
+
+    private lateinit var adapter: FoodItemAdapter
+    private val foodItems = mutableListOf<OrderItemData>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+
         val view = inflater.inflate(R.layout.fragment_order_detail, container, false)
+
         (activity as? HomeActivity)?.updateHeader("Order Details", true)
 
-        // Initialize views
-        val tvOrderDetailHeader: TextView = view.findViewById(R.id.tvOrderDetailHeader)
-        val tvTableNo: TextView = view.findViewById(R.id.tvTableNo)
-        val tvStatus: TextView = view.findViewById(R.id.tvStatus)
-        val tvSubtotal: TextView = view.findViewById(R.id.tvSubtotal)
-        val tvGST: TextView = view.findViewById(R.id.tvGST)
-        val tvTotal: TextView = view.findViewById(R.id.tvTotal)
-        val btnDownloadInvoice: Button = view.findViewById(R.id.btnDownloadInvoice)
-        val rvFoodItems: RecyclerView = view.findViewById(R.id.rvFoodItems)
-        val btnAddFoodItem: MaterialButton = view.findViewById(R.id.btnAddFoodItem)
+        tvOrderDetailHeader = view.findViewById(R.id.tvOrderDetailHeader)
+        tvTableNo = view.findViewById(R.id.tvTableNo)
+        tvStatus = view.findViewById(R.id.tvStatus)
+        tvSubtotal = view.findViewById(R.id.tvSubtotal)
+        tvGST = view.findViewById(R.id.tvGST)
+        tvTotal = view.findViewById(R.id.tvTotal)
+
         ivEdit = view.findViewById(R.id.ivEdit)
 
-        // Setup RecyclerView
+        rvFoodItems = view.findViewById(R.id.rvFoodItems)
         rvFoodItems.layoutManager = LinearLayoutManager(requireContext())
 
-        // Dummy data
-        foodItems = listOf(
-            FoodItem("Pizza", 2, 200.0),
-            FoodItem("Burger", 1, 120.0),
-            FoodItem("Pasta", 3, 180.0)
-        )
-
-        rvFoodItems.adapter = FoodItemAdapter(foodItems)
+        adapter = FoodItemAdapter(foodItems)
+        rvFoodItems.adapter = adapter
 
         val orderId = arguments?.getString("orderId") ?: ""
-        val tableNo = arguments?.getString("tableNo") ?: ""
-        val status = arguments?.getString("status") ?: ""
 
-        // Set data to UI
-        tvOrderDetailHeader.text = "Order ID: #$orderId"
-        tvTableNo.text = "Table: $tableNo"
-        tvStatus.text = status
-
-        // Status color
-        when (status.lowercase()) {
-            "pending" -> tvStatus.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_orange_dark))
-            "preparing" -> tvStatus.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_blue_dark))
-            "completed" -> tvStatus.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_green_dark))
-            else -> tvStatus.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.darker_gray))
+        if (orderId.isNotEmpty()) {
+            loadOrderDetails(orderId)
         }
-
-        // Calculate totals
-        val subtotal = foodItems.sumOf { it.price * it.qty }
-        val gst = subtotal * 0.05
-        val total = subtotal + gst
-
-        tvSubtotal.text = "Subtotal: ₹$subtotal"
-        tvGST.text = "GST (5%): ₹$gst"
-        tvTotal.text = "Total: ₹$total"
-
-        // Show Invoice button only if Served
-        if (tvStatus.text.toString().contains("Served")) {
-            btnDownloadInvoice.visibility = View.VISIBLE
-        }
-
-        // Edit button click -> Show BottomSheet
-        ivEdit.setOnClickListener {
-            val bottomSheet = UpdateOrderBottomSheet(foodItems.toMutableList())
-            bottomSheet.show(parentFragmentManager, "UpdateOrderBottomSheet")
-        }
-        btnAddFoodItem.setOnClickListener {
-            val menuFragment = MenuFragment().apply {
-                arguments = bundleOf(MenuFragment.ARG_MODE to MenuFragment.MODE_EDIT)
-            }
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, menuFragment)
-                .addToBackStack(null)
-                .commit()
-        }
-
 
         return view
     }
-}
 
+    private fun loadOrderDetails(orderId: String) {
+
+        lifecycleScope.launch {
+
+            try {
+
+                LoaderHelper.showLoader(requireContext())
+
+                val response = RetrofitClient.api.getOrderDetails(
+                    mapOf("id" to orderId)
+                )
+
+                if (response.settings.success) {
+
+                    val order = response.data
+
+                    tvOrderDetailHeader.text = "Order #${order.order_id}"
+                    tvTableNo.text = "Table: ${order.table_id}"
+                    tvStatus.text = order.status
+
+                    setStatusColor(order.status)
+
+                    foodItems.clear()
+                    foodItems.addAll(order.items)
+                    adapter.notifyDataSetChanged()
+
+//                    tvSubtotal.text = "Subtotal: ₹${order.total_payable}"
+//                    tvGST.text = "GST: ₹${order.tax_amount}"
+                    tvTotal.text = "Total: ₹${order.total_payable}"
+
+                }
+
+            } catch (e: Exception) {
+
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to load order details",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            } finally {
+
+                LoaderHelper.hideLoader()
+
+            }
+        }
+    }
+
+    private fun setStatusColor(status: String) {
+
+        when (status.uppercase()) {
+
+            "PLACED" -> tvStatus.setTextColor(
+                ContextCompat.getColor(requireContext(), android.R.color.holo_orange_dark)
+
+            )
+
+            "PREPARING" -> tvStatus.setTextColor(
+                ContextCompat.getColor(requireContext(), android.R.color.holo_blue_dark)
+            )
+
+            "SERVED" -> tvStatus.setTextColor(
+                ContextCompat.getColor(requireContext(), android.R.color.holo_green_dark)
+            )
+
+            else -> tvStatus.setTextColor(
+                ContextCompat.getColor(requireContext(), android.R.color.darker_gray)
+            )
+        }
+    }
+}
 
 
 

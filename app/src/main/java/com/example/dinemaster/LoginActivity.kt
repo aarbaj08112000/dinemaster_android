@@ -61,6 +61,7 @@ class LoginActivity : AppCompatActivity() {
                         .putString("authToken", response.data.token)
                         .putString("userName", response.data.name)
                         .putString("userEmail", response.data.email)
+                        .putString("restaurant_id", response.data.restaurant_id)
                         .apply()
 
                     showSnackbar(response.settings.message, isError = false)

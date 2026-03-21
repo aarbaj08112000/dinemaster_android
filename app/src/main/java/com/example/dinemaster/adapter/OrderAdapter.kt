@@ -9,10 +9,11 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dinemaster.R
 import com.example.dinemaster.model.Order
+import com.example.dinemaster.model.OrderData
 
 class OrderAdapter(
-    private val orders: List<Order>,
-    private val onOrderClick: (Order) -> Unit
+    private val orders: List<OrderData>,
+    private val onOrderClick: (OrderData) -> Unit
 ) : RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
 
     inner class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -23,35 +24,59 @@ class OrderAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_order, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_order, parent, false)
         return OrderViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
+
         val order = orders[position]
 
-        holder.tvOrderId.text = "Order #${order.orderId}"
-        holder.tvTableNo.text = "Table: ${order.tableNo}"
-        holder.tvDetails.text = order.details
+        holder.tvOrderId.text = "Order #${order.order_id}"
+        holder.tvTableNo.text = "Table: ${order.table_id}"
+
+        // Convert items list to readable string
+        val details = order.items.joinToString(", ") { item ->
+            val qty = item.quantity.toDouble().toInt()
+            "${qty}x ${item.item_name}"
+        }
+
+        holder.tvDetails.text = details
+
         holder.tvStatus.text = order.status
 
-        when (order.status.lowercase()) {
-            "pending" -> holder.tvStatus.setTextColor(
-                holder.itemView.context.getColor(android.R.color.holo_orange_dark)
+        val context = holder.itemView.context
+
+        when (order.status.uppercase()) {
+
+            "PLACED" -> holder.tvStatus.setTextColor(
+                context.getColor(android.R.color.holo_orange_dark)
             )
-            "preparing" -> holder.tvStatus.setTextColor(
-                holder.itemView.context.getColor(android.R.color.holo_blue_dark)
+
+            "PREPARING" -> holder.tvStatus.setTextColor(
+                context.getColor(android.R.color.holo_blue_dark)
             )
-            "served" -> holder.tvStatus.setTextColor(
-                holder.itemView.context.getColor(android.R.color.holo_green_dark)
+
+            "READY" -> holder.tvStatus.setTextColor(
+                context.getColor(android.R.color.holo_purple)
             )
+
+            "SERVED" -> holder.tvStatus.setTextColor(
+                context.getColor(android.R.color.holo_green_dark)
+            )
+
+            "PAID" -> holder.tvStatus.setTextColor(
+                context.getColor(android.R.color.darker_gray)
+            )
+
             else -> holder.tvStatus.setTextColor(
-                holder.itemView.context.getColor(android.R.color.darker_gray)
+                context.getColor(android.R.color.black)
             )
         }
 
         holder.itemView.setOnClickListener {
-            onOrderClick(order)   // callback
+            onOrderClick(order)
         }
     }
 
