@@ -15,6 +15,7 @@ import com.example.dinemaster.model.NewOrderResponse
 import com.example.dinemaster.model.OrderDetailsResponse
 import com.example.dinemaster.model.OrdersResponse
 import com.example.dinemaster.model.RestaurantResponse
+import com.example.dinemaster.model.TableListResponse
 import com.example.dinemaster.model.UserDetailsResponse
 import retrofit2.Call
 import retrofit2.Response
@@ -74,4 +75,10 @@ interface ApiService {
     suspend fun createOrder(
         @Body request: NewOrderRequest
     ): Response<NewOrderResponse>
+
+    @POST("tables")
+    suspend fun getTables(
+        @Body params: Map<String, String>
+    ): TableListResponse
+
 }

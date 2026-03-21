@@ -3,6 +3,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -20,6 +22,7 @@ import com.example.dinemaster.model.Item
 import com.example.dinemaster.model.MenuItem
 import com.example.dinemaster.model.MenuItemApi
 import com.example.dinemaster.model.NewOrderRequest
+import com.example.dinemaster.model.TableData
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -31,13 +34,18 @@ class CreateOrderFragment : Fragment() {
     private lateinit var tvSummary: TextView
     private lateinit var btnSaveOrder: MaterialButton
     private lateinit var btnAddMenu: MaterialButton
-    private lateinit var etTableNo: EditText
+    private lateinit var actTable: AutoCompleteTextView
 
     private lateinit var menuAdapter: MenuAdapter
     private val selectedItems = mutableListOf<MenuItemApi>()
 
+    // ✅ Table Data
+    private var tableList: List<TableData> = listOf()
+    private var selectedTableId: String = ""
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
@@ -51,22 +59,22 @@ class CreateOrderFragment : Fragment() {
         loadDataFromArguments()
         setupListeners()
 
+        callTableListApi() // 🔥 load tables
+
         updateUI()
 
         return view
     }
 
-    // ✅ Initialize Views
     private fun initViews(view: View) {
         rvSelectedMenu = view.findViewById(R.id.rvSelectedMenu)
         tvEmptyMessage = view.findViewById(R.id.tvEmptyMessage)
         tvSummary = view.findViewById(R.id.tvSummary)
         btnSaveOrder = view.findViewById(R.id.btnSaveOrder)
         btnAddMenu = view.findViewById(R.id.btnAddMenu)
-        etTableNo = view.findViewById(R.id.etTableNo)
+        actTable = view.findViewById(R.id.actTable)
     }
 
-    // ✅ Setup RecyclerView
     private fun setupRecycler() {
         rvSelectedMenu.layoutManager = GridLayoutManager(requireContext(), 2)
 
@@ -80,21 +88,17 @@ class CreateOrderFragment : Fragment() {
             onItemClick = { item ->
                 Toast.makeText(requireContext(), "Clicked: ${item.name}", Toast.LENGTH_SHORT).show()
             },
-            onQtyChange = {
-                updateUI()
-            }
+            onQtyChange = { updateUI() }
         )
 
         rvSelectedMenu.adapter = menuAdapter
     }
 
-    // ✅ Load Data
     private fun loadDataFromArguments() {
         val items = arguments?.getSerializable("order_items") as? ArrayList<MenuItemApi>
         items?.let { selectedItems.addAll(it) }
     }
 
-    // ✅ Click Listeners
     private fun setupListeners() {
 
         btnAddMenu.setOnClickListener {
@@ -112,18 +116,57 @@ class CreateOrderFragment : Fragment() {
         }
 
         btnSaveOrder.setOnClickListener {
-            val tableNo = etTableNo.text.toString().trim()
 
             when {
-                tableNo.isEmpty() -> showSnackbar("Enter table number", true)
-                !tableNo.all { it.isDigit() } -> showSnackbar("Table number must be numeric", true)
+                selectedTableId.isEmpty() -> showSnackbar("Select table", true)
                 selectedItems.isEmpty() -> showSnackbar("Add menu items first", true)
-                else -> callCreateOrderApi(tableNo)
+                else -> callCreateOrderApi(selectedTableId)
             }
         }
     }
 
-    // ✅ Update UI
+    // ✅ TABLE API
+    private fun callTableListApi() {
+
+        val restaurantId = PrefManager.getRestaurantId()
+
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.api.getTables(
+                    mapOf("restaurant_id" to restaurantId)
+                )
+
+                if (response.settings.success) {
+
+                    tableList = response.data
+
+                    // 🔥 Set dropdown values
+                    val tableNames = tableList.map { it.table_name }
+
+                    val adapter = ArrayAdapter(
+                        requireContext(),
+                        android.R.layout.simple_dropdown_item_1line,
+                        tableNames
+                    )
+
+                    actTable.setAdapter(adapter)
+
+                    // 🔥 Handle selection
+                    actTable.setOnItemClickListener { _, _, position, _ ->
+                        val selectedTable = tableList[position]
+                        selectedTableId = selectedTable.table_id
+                    }
+
+                } else {
+                    showSnackbar(response.settings.message, true)
+                }
+
+            } catch (e: Exception) {
+                showSnackbar("Error loading tables", true)
+            }
+        }
+    }
+
     private fun updateUI() {
         if (selectedItems.isEmpty()) {
             rvSelectedMenu.visibility = View.GONE
@@ -144,8 +187,8 @@ class CreateOrderFragment : Fragment() {
         }
     }
 
-    // ✅ API CALL
-    private fun callCreateOrderApi(tableNo: String) {
+    private fun callCreateOrderApi(tableId: String) {
+
         val restaurantId = PrefManager.getRestaurantId()
 
         LoaderHelper.showLoader(requireContext())
@@ -153,20 +196,19 @@ class CreateOrderFragment : Fragment() {
         lifecycleScope.launch {
             try {
 
-                // 🔥 Convert items
                 val itemList = selectedItems.map { item ->
                     Item(
                         item_id = item.item_id.toString(),
                         item_name = item.name,
                         unit_price = item.base_price.toString(),
                         quantity = item.qty.toString(),
-                        addons = null // 👉 update if you have addons
+                        addons = null
                     )
                 }
 
                 val request = NewOrderRequest(
-                    restaurant_id = restaurantId, // 👉 make dynamic later
-                    table_no = tableNo,
+                    restaurant_id = restaurantId,
+                    table_no = tableId, // ✅ now from dropdown
                     items = itemList
                 )
 
@@ -175,22 +217,16 @@ class CreateOrderFragment : Fragment() {
                 if (response.isSuccessful && response.body()?.settings?.success == true) {
 
                     val orderId = response.body()?.data?.order_id
-
                     showSnackbar("Order Created! ID: $orderId", false)
 
-                    // ✅ Clear data
                     selectedItems.clear()
                     updateUI()
 
-                    // ✅ Optional navigation
                     delay(1000)
                     parentFragmentManager.popBackStack()
 
                 } else {
-                    showSnackbar(
-                        response.body()?.settings?.message ?: "Failed to create order",
-                        true
-                    )
+                    showSnackbar("Failed to create order", true)
                 }
 
             } catch (e: Exception) {

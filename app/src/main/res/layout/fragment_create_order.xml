@@ -12,13 +12,13 @@
         android:id="@+id/tilTableNo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btnAddMenu"
         style="@style/EditTextPoppins"
         app:boxBackgroundMode="outline"
+        app:endIconMode="dropdown_menu"
         app:boxStrokeColor="@color/color_primary"
         app:hintTextColor="@color/color_primary"
         app:boxCornerRadiusTopStart="12dp"
@@ -26,14 +26,13 @@
         app:boxCornerRadiusBottomStart="12dp"
         app:boxCornerRadiusBottomEnd="12dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etTableNo"
-            style="@style/EditTextPoppins"
+        <AutoCompleteTextView
+            android:id="@+id/actTable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Table Number"
-            android:inputType="number"
-            android:padding="12dp"/>
+            android:hint="Select Table"
+            android:padding="12dp"
+            android:inputType="none"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Add Menu Button -->
