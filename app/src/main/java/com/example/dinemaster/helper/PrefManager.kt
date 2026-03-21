@@ -79,6 +79,9 @@ object PrefManager {
         return prefs.getString(KEY_USER_ID, "") ?: ""
     }
 
+    fun getRestaurantId(): String {
+        return prefs.getString(KEY_RESTAURANT_ID, "") ?: ""
+    }
     fun getUserDetails(): UserData? {
 
         val json = prefs.getString(KEY_USER_DETAILS, null) ?: return null

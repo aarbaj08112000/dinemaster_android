@@ -10,6 +10,8 @@ import com.example.dinemaster.model.LoginRequest
 import com.example.dinemaster.model.LoginResponse
 import com.example.dinemaster.model.MenuItemResponse
 import com.example.dinemaster.model.MenuRequest
+import com.example.dinemaster.model.NewOrderRequest
+import com.example.dinemaster.model.NewOrderResponse
 import com.example.dinemaster.model.OrderDetailsResponse
 import com.example.dinemaster.model.OrdersResponse
 import com.example.dinemaster.model.RestaurantResponse
@@ -67,4 +69,9 @@ interface ApiService {
     suspend fun getOrderDetails(
         @Body body: Map<String, String>
     ): OrderDetailsResponse
+
+    @POST("new_orders")
+    suspend fun createOrder(
+        @Body request: NewOrderRequest
+    ): Response<NewOrderResponse>
 }

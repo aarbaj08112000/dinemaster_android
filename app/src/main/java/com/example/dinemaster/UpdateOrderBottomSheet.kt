@@ -11,11 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dinemaster.adapter.UpdateOrderAdapter
 import com.example.dinemaster.model.FoodItem
+import com.example.dinemaster.model.OrderItemData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 
 class UpdateOrderBottomSheet(
-    private val foodItems: MutableList<FoodItem>   // make it mutable
+    private val foodItems: MutableList<OrderItemData>   // make it mutable
 ) : BottomSheetDialogFragment() {
 
     override fun onCreateView(

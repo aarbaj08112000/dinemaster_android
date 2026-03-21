@@ -62,10 +62,12 @@ class RestaurantInfoBottomSheet : BottomSheetDialogFragment() {
 
                 // 🔹 Debug token from PrefManager
                 val token = PrefManager.getToken()
+                val restaurantId = PrefManager.getRestaurantId()
+
                 Log.d("RestaurantAPI", "Saved Token: $token")
 
                 val response = RetrofitClient.api.getRestaurantDetails(
-                    mapOf("id" to "1")
+                    mapOf("id" to restaurantId)
                 )
 
                 Log.d("RestaurantAPI", "Response: $response")

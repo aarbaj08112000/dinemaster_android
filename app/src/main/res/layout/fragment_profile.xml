@@ -14,7 +14,7 @@
         <!-- Top Gradient Background -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="200dp"
 
             android:background="@drawable/bg_gradient_header">
 
@@ -40,41 +40,6 @@
                />
         </com.google.android.material.card.MaterialCardView>
 
-
-        <!-- Name -->
-            <TextView
-                android:id="@+id/tvName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/cvProfile"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="16dp"
-                android:text="Jonathon Patricson"
-               style="@style/TextSemiBoldPoppins"
-                android:textColor="@android:color/white" />
-
-            <!-- Role -->
-            <TextView
-                android:id="@+id/tvRole"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tvName"
-                android:layout_centerHorizontal="true"
-                android:text="UI/UX Designer | Frontend Developer"
-                style="@style/TextMediumPoppins"
-                android:textColor="@android:color/white" />
-
-            <!-- Location -->
-            <TextView
-                android:id="@+id/tvLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tvRole"
-                android:layout_centerHorizontal="true"
-                android:text="📍 Comilla, Bangladesh"
-                style="@style/TextMediumPoppins"
-                android:textColor="@android:color/white" />
-
         </RelativeLayout>
 
         <!-- Stats Section -->
@@ -94,6 +59,7 @@
                 android:gravity="center">
 
                 <TextView
+                    android:id="@+id/tvTodayOrders"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="2332"
@@ -116,6 +82,7 @@
                 android:gravity="center">
 
                 <TextView
+                    android:id="@+id/tvLast7DaysOrder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="732"
@@ -136,6 +103,7 @@
                 android:gravity="center">
 
                 <TextView
+                    android:id="@+id/tvTotalOrders"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="332"
@@ -149,28 +117,101 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- About Section -->
-        <LinearLayout
+
+        <LinearLayout android:id="@+id/layoutUserInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@android:color/white"
             android:padding="16dp"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="8dp"
+           >
 
+            <!-- Title -->
             <TextView
-                android:text="About Jonathon"
+                android:id="@+id/tvUserInfoTitle"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User Information"
                 android:textSize="16sp"
-               style="@style/TextSemiBoldPoppins"
-                android:layout_marginBottom="8dp" android:layout_height="wrap_content"/>
+                style="@style/TextSemiBoldPoppins"
+                android:layout_marginBottom="12dp"/>
 
+            <!-- Username -->
             <TextView
                 android:layout_width="wrap_content"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat."
-               style="@style/TextNormalPoppins"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:text="Username"
+                style="@style/TextNormalPoppins"/>
+
+            <TextView
+                android:id="@+id/tvUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="odell44"
+                style="@style/TextSemiBoldPoppins"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Email -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                style="@style/TextNormalPoppins"/>
+
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="example@email.com"
+                style="@style/TextSemiBoldPoppins"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Phone -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phone"
+                style="@style/TextNormalPoppins"/>
+
+            <TextView
+                android:id="@+id/tvPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+91 9876543210"
+                style="@style/TextSemiBoldPoppins"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Role -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Role"
+                style="@style/TextNormalPoppins"/>
+
+            <TextView
+                android:id="@+id/tvUserRole"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Super Admin"
+                style="@style/TextSemiBoldPoppins"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Status -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                style="@style/TextNormalPoppins"/>
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Active"
+                style="@style/TextSemiBoldPoppins"/>
         </LinearLayout>
+        <!-- About Section -->
 
         <!-- Follow Button -->
         <Button

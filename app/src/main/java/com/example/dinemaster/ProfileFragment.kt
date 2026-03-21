@@ -11,15 +11,24 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.example.dinemaster.helper.LoaderHelper
 import com.example.dinemaster.helper.PrefManager
 import com.example.dinemaster.helper.RetrofitClient
 import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
-    private lateinit var tvName: TextView
-    private lateinit var tvRole: TextView
-    private lateinit var tvLocation: TextView
+    // ✅ User Info
+    private lateinit var tvUsername: TextView
+    private lateinit var tvEmail: TextView
+    private lateinit var tvPhone: TextView
+    private lateinit var tvUserRole: TextView
+    private lateinit var tvStatus: TextView
+
+    // ✅ Stats
+    private lateinit var tvTodayOrders: TextView
+    private lateinit var tvLast7DaysOrder: TextView
+    private lateinit var tvTotalOrders: TextView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -27,18 +36,29 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         (activity as? HomeActivity)?.setActiveTabByTag("Profile")
         (activity as? HomeActivity)?.updateHeader("Profile", false)
 
-        tvName = view.findViewById(R.id.tvName)
-        tvRole = view.findViewById(R.id.tvRole)
-        tvLocation = view.findViewById(R.id.tvLocation)
-
+        initViews(view)
         callUserDetailsApi()
 
-        // Logout button
+        // ✅ Logout
         view.findViewById<Button>(R.id.btnLogout).setOnClickListener {
             showLogoutDialog()
         }
     }
 
+    // ✅ Initialize Views
+    private fun initViews(view: View) {
+        tvUsername = view.findViewById(R.id.tvUsername)
+        tvEmail = view.findViewById(R.id.tvEmail)
+        tvPhone = view.findViewById(R.id.tvPhone)
+        tvUserRole = view.findViewById(R.id.tvUserRole)
+        tvStatus = view.findViewById(R.id.tvStatus)
+
+        tvTodayOrders = view.findViewById(R.id.tvTodayOrders)
+        tvLast7DaysOrder = view.findViewById(R.id.tvLast7DaysOrder)
+        tvTotalOrders = view.findViewById(R.id.tvTotalOrders)
+    }
+
+    // ✅ API Call
     private fun callUserDetailsApi() {
 
         val userId = PrefManager.getUserId()
@@ -46,6 +66,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         viewLifecycleOwner.lifecycleScope.launch {
 
             try {
+                LoaderHelper.showLoader(requireContext())
 
                 val response = RetrofitClient.api.getUserDetails(mapOf("id" to userId))
 
@@ -53,12 +74,19 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
                     val data = response.data
 
-                    tvName.text = data.user_name
-                    tvRole.text = "Role ID: ${data.user_role}"
-                    tvLocation.text = "📞 ${data.phone}"
+                    // ✅ Set User Info
+                    tvUsername.text = data.user_name
+                    tvEmail.text = data.user_email
+                    tvPhone.text = data.phone
+                    tvUserRole.text = data.role_name
+                    tvStatus.text = data.status
+
+                    // ✅ Set Stats
+                    tvTodayOrders.text = data.today_orders.toString()
+                    tvLast7DaysOrder.text = data.last_7_days_orders.toString()
+                    tvTotalOrders.text = data.total_orders.toString()
 
                 } else {
-
                     Toast.makeText(
                         requireContext(),
                         response.settings.message,
@@ -75,10 +103,14 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     "Failed to load profile",
                     Toast.LENGTH_SHORT
                 ).show()
+
+            } finally {
+                LoaderHelper.hideLoader()
             }
         }
     }
 
+    // ✅ Logout Dialog
     private fun showLogoutDialog() {
 
         val dialog = AlertDialog.Builder(requireContext())
@@ -93,7 +125,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
                 startActivity(intent)
-
                 d.dismiss()
             }
             .setNegativeButton("Cancel") { d, _ -> d.dismiss() }

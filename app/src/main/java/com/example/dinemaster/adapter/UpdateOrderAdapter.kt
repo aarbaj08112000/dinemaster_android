@@ -11,10 +11,11 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dinemaster.R
 import com.example.dinemaster.model.FoodItem
+import com.example.dinemaster.model.OrderItemData
 
 
 class UpdateOrderAdapter(
-    private val items: MutableList<FoodItem>
+    private val items: MutableList<OrderItemData>
 ) : RecyclerView.Adapter<UpdateOrderAdapter.FoodViewHolder>() {
 
     inner class FoodViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -33,15 +34,15 @@ class UpdateOrderAdapter(
 
     override fun onBindViewHolder(holder: FoodViewHolder, position: Int) {
         val item = items[position]
-        holder.tvFoodName.text = item.name
-        holder.tvQuantity.text = item.qty.toString()
+        holder.tvFoodName.text = item.item_name
+        holder.tvQuantity.text = item.quantity.toString()
 
         // Minus button logic
         holder.btnMinus.setOnClickListener {
             var currentQty = holder.tvQuantity.text.toString().toInt()
             if (currentQty > 1) {
                 currentQty--
-                items[position] = item.copy(qty = currentQty)
+                items[position] = item.copy(quantity = currentQty.toString().toInt())
                 holder.tvQuantity.text = currentQty.toString()
             } else {
                 Toast.makeText(holder.itemView.context, "Qty cannot be less than 1", Toast.LENGTH_SHORT).show()
@@ -52,7 +53,7 @@ class UpdateOrderAdapter(
         holder.btnPlus.setOnClickListener {
             var currentQty = holder.tvQuantity.text.toString().toInt()
             currentQty++
-            items[position] = item.copy(qty = currentQty)
+            items[position] = item.copy(quantity = currentQty.toString().toInt())
             holder.tvQuantity.text = currentQty.toString()
         }
 
@@ -76,12 +77,12 @@ class UpdateOrderAdapter(
             if (pos != RecyclerView.NO_POSITION) {
                 val dialog = AlertDialog.Builder(holder.itemView.context)
                     .setTitle("Delete Item")
-                    .setMessage("Are you sure you want to delete ${items[pos].name}?")
+                    .setMessage("Are you sure you want to delete ${items[pos].item_name}?")
                     .setPositiveButton("Delete") { _, _ ->
                         val removedItem = items[pos]
                         items.removeAt(pos)
                         notifyItemRemoved(pos)
-                        Toast.makeText(holder.itemView.context, "${removedItem.name} removed", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(holder.itemView.context, "${removedItem.item_name} removed", Toast.LENGTH_SHORT).show()
                     }
                     .setNegativeButton("Cancel", null)
                     .create()

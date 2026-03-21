@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dinemaster.adapter.CategoryAdapter
 import com.example.dinemaster.adapter.MenuAdapter
 import com.example.dinemaster.helper.LoaderHelper
+import com.example.dinemaster.helper.PrefManager
 import com.example.dinemaster.helper.RetrofitClient
 import com.example.dinemaster.model.Category
 import com.example.dinemaster.model.MenuItemApi
@@ -32,7 +33,6 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
     private lateinit var categoryAdapter: CategoryAdapter
     private lateinit var menuAdapter: MenuAdapter
 
-    var restaurant_id: Int = 1
 
     private val categoryList = mutableListOf<Category>()
     private val menuItems = mutableListOf<MenuItemApi>()
@@ -193,16 +193,16 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
     // ---------------------------
 
     private fun loadCategoriesFromApi() {
-
+        val restaurantId = PrefManager.getRestaurantId()
         viewLifecycleOwner.lifecycleScope.launch {
 
             LoaderHelper.showLoader(requireContext())
 
             try {
 
-                Log.d("API_REQUEST", "Calling categories with id=$restaurant_id")
+                Log.d("API_REQUEST", "Calling categories with id=$restaurantId")
 
-                val response = RetrofitClient.api.getCategories(restaurant_id)
+                val response = RetrofitClient.api.getCategories(restaurantId.toInt())
 
                 if (response.data != null) {
 
@@ -241,7 +241,7 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
     private fun loadMenuForCategory(categoryId: String) {
 
         selectedCategoryId = categoryId
-
+        val restaurantId = PrefManager.getRestaurantId()
         viewLifecycleOwner.lifecycleScope.launch {
 
             LoaderHelper.showLoader(requireContext())
@@ -249,7 +249,7 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
             try {
 
                 val request = MenuRequest(
-                    restaurant_id = restaurant_id.toString(),
+                    restaurant_id = restaurantId,
                     category_id = categoryId,
                     veg_type = vegType
                 )

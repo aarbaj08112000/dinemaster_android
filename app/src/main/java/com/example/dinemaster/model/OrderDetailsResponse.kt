@@ -21,5 +21,5 @@ data class OrderItemData(
     val item_name: String,
     val veg_type: String,
     val unit_price: String,
-    val quantity: String
+    val quantity: Int
 )

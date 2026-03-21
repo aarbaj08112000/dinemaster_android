@@ -28,6 +28,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etTableNo"
+            style="@style/EditTextPoppins"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter Table Number"
@@ -99,6 +100,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingStart="5dp"
                 android:text="0 items | ₹0.00"
                 style="@style/TextSemiBoldPoppins"
                 />

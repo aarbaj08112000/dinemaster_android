@@ -34,6 +34,7 @@ class OrderDetailFragment : Fragment() {
     private lateinit var tvSubtotal: TextView
     private lateinit var tvGST: TextView
     private lateinit var tvTotal: TextView
+    private lateinit var btnAddFoodItem: MaterialButton
 
     private lateinit var adapter: FoodItemAdapter
     private val foodItems = mutableListOf<OrderItemData>()
@@ -55,6 +56,22 @@ class OrderDetailFragment : Fragment() {
         tvTotal = view.findViewById(R.id.tvTotal)
 
         ivEdit = view.findViewById(R.id.ivEdit)
+        btnAddFoodItem = view.findViewById(R.id.btnAddFoodItem)
+        ivEdit.setOnClickListener {
+            val bottomSheet = UpdateOrderBottomSheet(foodItems) // ✅ pass list
+            bottomSheet.show(parentFragmentManager, "UpdateOrder")
+        }
+        btnAddFoodItem.setOnClickListener{
+
+            val menuFragment = MenuFragment().apply {
+                arguments = bundleOf(MenuFragment.ARG_MODE to MenuFragment.MODE_EDIT)
+            }
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, menuFragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
 
         rvFoodItems = view.findViewById(R.id.rvFoodItems)
         rvFoodItems.layoutManager = LinearLayoutManager(requireContext())
