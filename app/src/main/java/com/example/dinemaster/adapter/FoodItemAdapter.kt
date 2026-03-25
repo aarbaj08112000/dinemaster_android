@@ -10,8 +10,16 @@ import com.example.dinemaster.R
 import com.example.dinemaster.model.FoodItem
 import com.example.dinemaster.model.OrderItemData
 
-class FoodItemAdapter(private val items: List<OrderItemData>) :
+class FoodItemAdapter :
     RecyclerView.Adapter<FoodItemAdapter.FoodViewHolder>() {
+
+    private val items = mutableListOf<OrderItemData>()
+
+    fun submitList(newList: List<OrderItemData>) {
+        items.clear()
+        items.addAll(newList)
+        notifyDataSetChanged()
+    }
 
     inner class FoodViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvFoodName: TextView = itemView.findViewById(R.id.tvFoodName)
@@ -29,14 +37,13 @@ class FoodItemAdapter(private val items: List<OrderItemData>) :
 
         val item = items[position]
 
-        val qty = item.quantity.toDouble().toInt()
-        val price = item.unit_price.toDouble()
+        val qty = item.quantity.toDoubleOrNull() ?: 0.0
+        val price = item.unit_price.toDoubleOrNull() ?: 0.0
+        val total = qty * price
 
         holder.tvFoodName.text = item.item_name
-        holder.tvQty.text = "Qty: $qty"
-
-        val total = qty * price
-        holder.tvPrice.text = "₹$total"
+        holder.tvQty.text = "Qty: ${qty.toInt()}"
+        holder.tvPrice.text = "₹${String.format("%.2f", total)}"
     }
 
     override fun getItemCount(): Int = items.size

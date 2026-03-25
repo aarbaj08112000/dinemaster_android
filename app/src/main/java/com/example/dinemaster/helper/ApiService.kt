@@ -1,7 +1,9 @@
 package com.example.dinemaster.helper
 
+import com.example.dinemaster.model.AddOrderItemsRequest
 import com.example.dinemaster.model.CategoryRequest
 import com.example.dinemaster.model.CategoryResponse
+import com.example.dinemaster.model.DeleteItemRequest
 import com.example.dinemaster.model.ForgotPasswordRequest
 import com.example.dinemaster.model.ForgotPasswordResponse
 import com.example.dinemaster.model.ItemDetailsRequest
@@ -13,9 +15,11 @@ import com.example.dinemaster.model.MenuRequest
 import com.example.dinemaster.model.NewOrderRequest
 import com.example.dinemaster.model.NewOrderResponse
 import com.example.dinemaster.model.OrderDetailsResponse
+import com.example.dinemaster.model.OrderUpdateResponse
 import com.example.dinemaster.model.OrdersResponse
 import com.example.dinemaster.model.RestaurantResponse
 import com.example.dinemaster.model.TableListResponse
+import com.example.dinemaster.model.UpdateOrderRequest
 import com.example.dinemaster.model.UserDetailsResponse
 import retrofit2.Call
 import retrofit2.Response
@@ -80,5 +84,20 @@ interface ApiService {
     suspend fun getTables(
         @Body params: Map<String, String>
     ): TableListResponse
+
+    @POST("update_item")
+    suspend fun updateOrderItems(
+        @Body request: UpdateOrderRequest
+    ): OrderUpdateResponse
+
+    @POST("add_order_items")
+    suspend fun addOrderItems(
+        @Body request: AddOrderItemsRequest
+    ): OrderUpdateResponse
+
+    @POST("delete_item")
+    suspend fun deleteOrderItem(
+        @Body request: DeleteItemRequest
+    ): OrderUpdateResponse
 
 }

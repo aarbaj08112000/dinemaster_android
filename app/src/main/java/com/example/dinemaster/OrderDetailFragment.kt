@@ -48,6 +48,37 @@ class OrderDetailFragment : Fragment() {
 
         (activity as? HomeActivity)?.updateHeader("Order Details", true)
 
+        initViews(view)
+//        setupRecycler(view)
+
+        val orderId = arguments?.getString("orderId") ?: ""
+        if (orderId.isNotEmpty()) {
+            loadOrderDetails(orderId)
+        }
+
+        return view
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupRecycler(view)
+
+        parentFragmentManager.setFragmentResultListener(
+            "order_updated",
+            viewLifecycleOwner
+        ) { _, _ ->
+
+            val orderId = arguments?.getString("orderId") ?: ""
+
+            if (orderId.isNotEmpty()) {
+                loadOrderDetails(orderId)   // 🔥 REFRESH API CALL
+            }
+        }
+
+    }
+
+    private fun initViews(view: View) {
+        val orderId = arguments?.getString("orderId") ?: ""
         tvOrderDetailHeader = view.findViewById(R.id.tvOrderDetailHeader)
         tvTableNo = view.findViewById(R.id.tvTableNo)
         tvStatus = view.findViewById(R.id.tvStatus)
@@ -57,43 +88,45 @@ class OrderDetailFragment : Fragment() {
 
         ivEdit = view.findViewById(R.id.ivEdit)
         btnAddFoodItem = view.findViewById(R.id.btnAddFoodItem)
+
         ivEdit.setOnClickListener {
-            val bottomSheet = UpdateOrderBottomSheet(foodItems) // ✅ pass list
+
+            val bottomSheet = UpdateOrderBottomSheet(
+                orderId = orderId.toInt(),
+                foodItems = foodItems
+            )
             bottomSheet.show(parentFragmentManager, "UpdateOrder")
         }
-        btnAddFoodItem.setOnClickListener{
 
+        btnAddFoodItem.setOnClickListener {
             val menuFragment = MenuFragment().apply {
-                arguments = bundleOf(MenuFragment.ARG_MODE to MenuFragment.MODE_EDIT)
+                arguments = bundleOf(
+                    MenuFragment.ARG_MODE to MenuFragment.MODE_EDIT,
+                    "orderId" to orderId   // ✅ pass orderId
+                )
             }
+
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, menuFragment)
                 .addToBackStack(null)
                 .commit()
         }
+    }
 
+    private fun setupRecycler(view: View) {
 
         rvFoodItems = view.findViewById(R.id.rvFoodItems)
+
         rvFoodItems.layoutManager = LinearLayoutManager(requireContext())
 
-        adapter = FoodItemAdapter(foodItems)
+        adapter = FoodItemAdapter()
         rvFoodItems.adapter = adapter
-
-        val orderId = arguments?.getString("orderId") ?: ""
-
-        if (orderId.isNotEmpty()) {
-            loadOrderDetails(orderId)
-        }
-
-        return view
     }
 
     private fun loadOrderDetails(orderId: String) {
 
         lifecycleScope.launch {
-
             try {
-
                 LoaderHelper.showLoader(requireContext())
 
                 val response = RetrofitClient.api.getOrderDetails(
@@ -104,55 +137,66 @@ class OrderDetailFragment : Fragment() {
 
                     val order = response.data
 
+                    // 🔹 Header
                     tvOrderDetailHeader.text = "Order #${order.order_id}"
                     tvTableNo.text = "Table: ${order.table_id}"
                     tvStatus.text = order.status
-
                     setStatusColor(order.status)
 
+                    // 🔥 Handle duplicate items (VERY IMPORTANT)
+//                    val uniqueItems = order.items.distinctBy { it.order_item_id }
+
                     foodItems.clear()
+//                    foodItems.addAll(uniqueItems)
                     foodItems.addAll(order.items)
-                    adapter.notifyDataSetChanged()
 
-//                    tvSubtotal.text = "Subtotal: ₹${order.total_payable}"
-//                    tvGST.text = "GST: ₹${order.tax_amount}"
-                    tvTotal.text = "Total: ₹${order.total_payable}"
+                    adapter.submitList(foodItems.toList())
 
+                    // 🔥 Amounts
+                    val subtotal = order.subtotal_amount.toDoubleOrNull() ?: 0.0
+                    val gstPercent = order.gst_percentage.toDoubleOrNull() ?: 0.0
+                    val gstAmount = order.tax_amount.toDoubleOrNull() ?: 0.0
+                    val total = order.total_payable.toDoubleOrNull() ?: 0.0
+
+                    tvSubtotal.text = "Subtotal: ₹${formatAmount(subtotal)}"
+
+                    if (order.gst_applicable == "yes") {
+                        tvGST.text = "GST (${gstPercent}%): ₹${formatAmount(gstAmount)}"
+                        tvGST.visibility = View.VISIBLE
+                    } else {
+                        tvGST.visibility = View.GONE
+                    }
+
+                    tvTotal.text = "Total: ₹${formatAmount(total)}"
                 }
 
             } catch (e: Exception) {
-
                 Toast.makeText(
                     requireContext(),
                     "Failed to load order details",
                     Toast.LENGTH_SHORT
                 ).show()
-
             } finally {
-
                 LoaderHelper.hideLoader()
-
             }
         }
     }
 
+    private fun formatAmount(value: Double): String {
+        return String.format("%.2f", value)
+    }
+
     private fun setStatusColor(status: String) {
-
         when (status.uppercase()) {
-
-            "PLACED" -> tvStatus.setTextColor(
+            "PENDING", "PLACED" -> tvStatus.setTextColor(
                 ContextCompat.getColor(requireContext(), android.R.color.holo_orange_dark)
-
             )
-
             "PREPARING" -> tvStatus.setTextColor(
                 ContextCompat.getColor(requireContext(), android.R.color.holo_blue_dark)
             )
-
-            "SERVED" -> tvStatus.setTextColor(
+            "SERVED", "COMPLETED" -> tvStatus.setTextColor(
                 ContextCompat.getColor(requireContext(), android.R.color.holo_green_dark)
             )
-
             else -> tvStatus.setTextColor(
                 ContextCompat.getColor(requireContext(), android.R.color.darker_gray)
             )

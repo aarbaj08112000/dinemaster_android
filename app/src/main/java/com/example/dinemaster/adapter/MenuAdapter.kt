@@ -15,12 +15,13 @@ import com.example.dinemaster.model.MenuItemApi
 
 class MenuAdapter(
     private val items: MutableList<MenuItemApi>,
-    private val mode: String = MenuFragment.MODE_EDIT,
+    private val mode: String,
     private val onItemClick: (MenuItemApi) -> Unit,
-    private val onQtyChange: (() -> Unit)? = null
+    private val onQtyChange: (MenuItemApi) -> Unit
 ) : RecyclerView.Adapter<MenuAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
         val ivFood: ImageView = itemView.findViewById(R.id.imgFoodItem)
         val imgVegType: ImageView = itemView.findViewById(R.id.imgVegType)
         val tvName: TextView = itemView.findViewById(R.id.tvMenuName)
@@ -31,23 +32,26 @@ class MenuAdapter(
         val llQuantityControl: LinearLayout = itemView.findViewById(R.id.llQuantityControl)
 
         fun bind(item: MenuItemApi) {
+
             ivFood.load(item.image_url) {
                 placeholder(R.drawable.food_placeholder)
                 error(R.drawable.food_placeholder)
             }
 
-
             tvName.text = item.name
-            tvPrice.text = "₹%.2f".format(item.base_price.toDouble())
+            tvPrice.text = "₹%.2f".format(item.base_price.toDoubleOrNull() ?: 0.0)
             tvQty.text = item.qty.toString()
+
             imgVegType.setImageResource(
                 if (item.veg_type.equals("VEG", true))
                     R.drawable.ic_veg
                 else
                     R.drawable.ic_nonveg
             )
-            llQuantityControl.visibility =
-                if (mode.equals(MenuFragment.MODE_EDIT, true)) View.VISIBLE else View.GONE
+
+            // ✅ FIXED VISIBILITY (EDIT + ADD show, VIEW hide)
+            val isViewMode = mode.equals(MenuFragment.MODE_VIEW, true)
+            llQuantityControl.visibility = if (isViewMode) View.GONE else View.VISIBLE
 
             itemView.setOnClickListener {
                 onItemClick(item)
@@ -56,18 +60,25 @@ class MenuAdapter(
             btnPlus.setOnClickListener {
                 val pos = bindingAdapterPosition
                 if (pos != RecyclerView.NO_POSITION) {
-                    items[pos].qty++
+                    val updatedItem = items[pos]
+                    updatedItem.qty++
+
                     notifyItemChanged(pos)
-                    onQtyChange?.invoke()
+                    onQtyChange(updatedItem)
                 }
             }
 
             btnMinus.setOnClickListener {
                 val pos = bindingAdapterPosition
-                if (pos != RecyclerView.NO_POSITION && items[pos].qty > 0) {
-                    items[pos].qty--
-                    notifyItemChanged(pos)
-                    onQtyChange?.invoke()
+                if (pos != RecyclerView.NO_POSITION) {
+                    val updatedItem = items[pos]
+
+                    if (updatedItem.qty > 0) {
+                        updatedItem.qty--
+
+                        notifyItemChanged(pos)
+                        onQtyChange(updatedItem)
+                    }
                 }
             }
         }
@@ -80,8 +91,7 @@ class MenuAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = items[position]
-        holder.bind(item)
+        holder.bind(items[position])
     }
 
     override fun getItemCount(): Int = items.size

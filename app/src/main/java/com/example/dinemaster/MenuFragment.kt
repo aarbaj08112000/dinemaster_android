@@ -15,11 +15,9 @@ import com.example.dinemaster.adapter.MenuAdapter
 import com.example.dinemaster.helper.LoaderHelper
 import com.example.dinemaster.helper.PrefManager
 import com.example.dinemaster.helper.RetrofitClient
-import com.example.dinemaster.model.Category
-import com.example.dinemaster.model.MenuItemApi
-import com.example.dinemaster.model.MenuRequest
+import com.example.dinemaster.helper.showSnackbar
+import com.example.dinemaster.model.*
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 
 class MenuFragment : Fragment(R.layout.fragment_menu) {
 
@@ -33,17 +31,20 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
     private lateinit var categoryAdapter: CategoryAdapter
     private lateinit var menuAdapter: MenuAdapter
 
-
     private val categoryList = mutableListOf<Category>()
     private val menuItems = mutableListOf<MenuItemApi>()
 
     private var vegType: String = ""
     private var selectedCategoryId: String = ""
 
+    private var orderId: String = ""
+    private var mode: String = MODE_VIEW   // ✅ FIXED (IMPORTANT)
+
     companion object {
         const val ARG_MODE = "type"
         const val MODE_VIEW = "ViewMode"
         const val MODE_EDIT = "EditMode"
+        const val MODE_ADD = "AddMode"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,16 +53,36 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
         (activity as? HomeActivity)?.setActiveTabByTag("Menu")
         (activity as? HomeActivity)?.updateHeader("Menu", true)
 
+        initViews(view)
+        handleArguments()
+        setupRecycler()
+        setupListeners()
+
+        loadCategoriesFromApi()
+    }
+
+    private fun initViews(view: View) {
         rvCategories = view.findViewById(R.id.rvCategories)
         rvMenu = view.findViewById(R.id.rvMenu)
         etSearch = view.findViewById(R.id.etSearch)
         btnOrderSave = view.findViewById(R.id.btnOrderSave)
         chkVeg = view.findViewById(R.id.chkVeg)
         chkNonVeg = view.findViewById(R.id.chkNonVeg)
+    }
 
-        // ---------------------------
-        // Category RecyclerView
-        // ---------------------------
+    private fun handleArguments() {
+        arguments?.let {
+            mode = it.getString(ARG_MODE)?.ifBlank { MODE_VIEW } ?: MODE_VIEW
+            orderId = it.getString("orderId") ?: ""
+        }
+
+        btnOrderSave.visibility =
+            if (mode.equals(MODE_VIEW, true)) View.GONE else View.VISIBLE
+    }
+
+    private fun setupRecycler() {
+
+        // Category
         rvCategories.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
@@ -72,27 +93,13 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
 
         rvCategories.adapter = categoryAdapter
 
-        // ---------------------------
-        // Menu RecyclerView
-        // ---------------------------
-        val mode = arguments?.getString(ARG_MODE)?.ifBlank { MODE_VIEW } ?: MODE_VIEW
-
+        // Menu
         rvMenu.layoutManager = GridLayoutManager(requireContext(), 2)
 
         menuAdapter = MenuAdapter(
-            mutableListOf(),
-            mode,
+            items = mutableListOf(),
+            mode = mode,   // ✅ PASS MODE
             onItemClick = { selectedItem ->
-
-//                val bundle = Bundle().apply {
-//                    putString("name", selectedItem.name)
-//
-//                }
-//
-//                parentFragmentManager.beginTransaction()
-//                    .replace(R.id.fragment_container, MenuDetailFragment::class.java, bundle)
-//                    .addToBackStack(null)
-//                    .commit()
                 val bundle = Bundle().apply {
                     putString("item_id", selectedItem.item_id)
                 }
@@ -102,72 +109,55 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
                     .addToBackStack(null)
                     .commit()
             },
-            onQtyChange = {
-                // cart update logic if needed
+            onQtyChange = { updatedItem ->
+                val index = menuItems.indexOfFirst { it.item_id == updatedItem.item_id }
+                if (index != -1) {
+                    menuItems[index] = updatedItem
+                }
             }
         )
 
         rvMenu.adapter = menuAdapter
+    }
 
-        // ---------------------------
-        // Search Category Filter
-        // ---------------------------
-        etSearch.addTextChangedListener { query ->
-            categoryAdapter.filter(query.toString())
+    private fun setupListeners() {
+
+        etSearch.addTextChangedListener {
+            categoryAdapter.filter(it.toString())
         }
-
-        // ---------------------------
-        // Save Order Button
-        // ---------------------------
-        btnOrderSave.visibility =
-            if (mode.equals(MODE_EDIT, ignoreCase = true)) View.VISIBLE else View.GONE
 
         btnOrderSave.setOnClickListener {
-            saveOrder(mode)
+            if (mode.equals(MODE_EDIT, true)) {
+                addItemsToOrder()
+            } else if (mode.equals(MODE_ADD, true)){
+                saveOrder(mode)
+            }
         }
 
-        // ---------------------------
-        // Veg / Non Veg Filter
-        // ---------------------------
-
         chkVeg.setOnCheckedChangeListener { _, isChecked ->
-
             if (isChecked) {
                 chkNonVeg.isChecked = false
                 vegType = "VEG"
-            } else {
-                vegType = ""
-            }
-
-            if (selectedCategoryId.isNotEmpty()) {
-                loadMenuForCategory(selectedCategoryId)
-            }
+            } else vegType = ""
+            reloadMenu()
         }
 
         chkNonVeg.setOnCheckedChangeListener { _, isChecked ->
-
             if (isChecked) {
                 chkVeg.isChecked = false
                 vegType = "NON_VEG"
-            } else {
-                vegType = ""
-            }
-
-            if (selectedCategoryId.isNotEmpty()) {
-                loadMenuForCategory(selectedCategoryId)
-            }
+            } else vegType = ""
+            reloadMenu()
         }
-
-        // ---------------------------
-        // Load Categories
-        // ---------------------------
-        loadCategoriesFromApi()
     }
 
-    // ---------------------------
-    // Save Order
-    // ---------------------------
+    private fun reloadMenu() {
+        if (selectedCategoryId.isNotEmpty()) {
+            loadMenuForCategory(selectedCategoryId)
+        }
+    }
 
+    // ✅ SAVE ORDER
     private fun saveOrder(mode: String) {
 
         val selectedItems = menuItems.filter { it.qty > 0 }
@@ -178,7 +168,6 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
         }
 
         val bundle = Bundle()
-
         bundle.putSerializable("order_items", ArrayList(selectedItems))
         bundle.putString(ARG_MODE, mode)
 
@@ -188,103 +177,107 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
             .commit()
     }
 
-    // ---------------------------
-    // Load Categories API
-    // ---------------------------
+    // ✅ ADD ITEMS API
+    private fun addItemsToOrder() {
 
-    private fun loadCategoriesFromApi() {
-        val restaurantId = PrefManager.getRestaurantId()
-        viewLifecycleOwner.lifecycleScope.launch {
+        val selectedItems = menuItems.filter { it.qty > 0 }
 
-            LoaderHelper.showLoader(requireContext())
+        if (selectedItems.isEmpty()) {
+            Toast.makeText(requireContext(), "No items selected!", Toast.LENGTH_SHORT).show()
+            return
+        }
 
+        val requestItems = selectedItems.map {
+            AddItem(
+                menu_id = it.item_id.toIntOrNull() ?: 0,
+                quantity = it.qty,
+                price = it.base_price.toDoubleOrNull() ?: 0.0
+            )
+        }
+
+        val safeOrderId = orderId.toIntOrNull()
+        if (safeOrderId == null) {
+            Toast.makeText(requireContext(), "Invalid Order ID", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val request = AddOrderItemsRequest(
+            order_id = safeOrderId,
+            items = requestItems
+        )
+
+        lifecycleScope.launch {
             try {
+                LoaderHelper.showLoader(requireContext())
 
-                Log.d("API_REQUEST", "Calling categories with id=$restaurantId")
+                val response = RetrofitClient.api.addOrderItems(request)
 
-                val response = RetrofitClient.api.getCategories(restaurantId.toInt())
+                if (response.settings.success) {
+                    showSnackbar(response.settings.message, false)
 
-                if (response.data != null) {
-
-                    categoryList.clear()
-                    categoryList.addAll(response.data)
-
-                    categoryAdapter.updateList(categoryList)
-
-                } else {
-
-                    Log.e("API_ERROR", "Category data null")
-
+                    parentFragmentManager.popBackStack()
+                    parentFragmentManager.setFragmentResult("order_updated", Bundle())
                 }
 
-            } catch (e: HttpException) {
-
-                val errorBody = e.response()?.errorBody()?.string()
-                Log.e("API_ERROR", "HTTP ${e.code()} | $errorBody")
-
             } catch (e: Exception) {
-
-                Log.e("API_ERROR", e.message ?: "Unknown Error")
-
+                Log.e("ADD_ITEM_ERROR", "Error", e)
+                Toast.makeText(requireContext(), "Failed to add items", Toast.LENGTH_SHORT).show()
             } finally {
-
                 LoaderHelper.hideLoader()
-
             }
         }
     }
 
-    // ---------------------------
-    // Load Menu API
-    // ---------------------------
+    // ✅ APIs
+    private fun loadCategoriesFromApi() {
+        val restaurantId = PrefManager.getRestaurantId()
+
+        lifecycleScope.launch {
+            try {
+                LoaderHelper.showLoader(requireContext())
+
+                val response = RetrofitClient.api.getCategories(restaurantId.toInt())
+
+                response.data?.let {
+                    categoryList.clear()
+                    categoryList.addAll(it)
+                    categoryAdapter.updateList(categoryList)
+                }
+
+            } catch (e: Exception) {
+                Log.e("CATEGORY_ERROR", e.message ?: "Error")
+            } finally {
+                LoaderHelper.hideLoader()
+            }
+        }
+    }
 
     private fun loadMenuForCategory(categoryId: String) {
-
-        selectedCategoryId = categoryId
         val restaurantId = PrefManager.getRestaurantId()
-        viewLifecycleOwner.lifecycleScope.launch {
 
-            LoaderHelper.showLoader(requireContext())
-
+        lifecycleScope.launch {
             try {
+                LoaderHelper.showLoader(requireContext())
 
-                val request = MenuRequest(
-                    restaurant_id = restaurantId,
-                    category_id = categoryId,
-                    veg_type = vegType
+                val response = RetrofitClient.api.getMenuItems(
+                    MenuRequest(
+                        restaurant_id = restaurantId,
+                        category_id = categoryId,
+                        veg_type = vegType
+                    )
                 )
 
-                val response = RetrofitClient.api.getMenuItems(request)
                 if (response.settings.success) {
                     menuItems.clear()
                     menuItems.addAll(response.data)
                     menuAdapter.updateItems(menuItems)
-
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        response.settings.message,
-                        Toast.LENGTH_SHORT
-                    ).show()
                 }
 
             } catch (e: Exception) {
-
-                Toast.makeText(
-                    requireContext(),
-                    "Failed to load menu",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                Log.e("MENU_API_ERROR", e.message ?: "Unknown error")
-
+                Log.e("MENU_ERROR", e.message ?: "Error")
             } finally {
-
                 LoaderHelper.hideLoader()
-
             }
         }
     }
 }
-
-

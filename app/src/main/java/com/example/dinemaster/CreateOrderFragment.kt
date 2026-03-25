@@ -1,11 +1,11 @@
 package com.example.dinemaster
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -42,6 +42,7 @@ class CreateOrderFragment : Fragment() {
     // ✅ Table Data
     private var tableList: List<TableData> = listOf()
     private var selectedTableId: String = ""
+    private var pendingTableName: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,6 +54,22 @@ class CreateOrderFragment : Fragment() {
 
         (activity as? HomeActivity)?.setActiveTabByTag("Create Order")
         (activity as? HomeActivity)?.updateHeader("Create Order", false)
+
+        parentFragmentManager.setFragmentResultListener("table_data", this) { _, bundle ->
+
+            val table = bundle.getString("table")
+            val tableId = bundle.getString("table_id")
+
+            Log.d("TABLE_DEBUG", "Received: $table | ID: $tableId")
+
+            if (!table.isNullOrEmpty()) {
+                pendingTableName = table
+            }
+
+            if (!tableId.isNullOrEmpty()) {
+                selectedTableId = tableId   // ✅ VERY IMPORTANT
+            }
+        }
 
         initViews(view)
         setupRecycler()
@@ -87,9 +104,8 @@ class CreateOrderFragment : Fragment() {
             mode,
             onItemClick = { item ->
                 Toast.makeText(requireContext(), "Clicked: ${item.name}", Toast.LENGTH_SHORT).show()
-            },
-            onQtyChange = { updateUI() }
-        )
+            }
+        ) { updateUI() }
 
         rvSelectedMenu.adapter = menuAdapter
     }
@@ -101,10 +117,20 @@ class CreateOrderFragment : Fragment() {
 
     private fun setupListeners() {
 
+
         btnAddMenu.setOnClickListener {
+            parentFragmentManager.setFragmentResult(
+                "table_data",
+                bundleOf(
+                    "table" to actTable.text.toString(),
+                    "table_id" to selectedTableId
+                )
+            )
+
+            Log.d("table_data", "setupListeners: ${actTable.text}")
             val menuFragment = MenuFragment().apply {
                 arguments = bundleOf(
-                    MenuFragment.ARG_MODE to MenuFragment.MODE_EDIT,
+                    MenuFragment.ARG_MODE to MenuFragment.MODE_ADD,
                     "existing_items" to ArrayList(selectedItems)
                 )
             }
@@ -143,6 +169,28 @@ class CreateOrderFragment : Fragment() {
                     // 🔥 Set dropdown values
                     val tableNames = tableList.map { it.table_name }
 
+//                    val adapter = ArrayAdapter(
+//                        requireContext(),
+//                        android.R.layout.simple_dropdown_item_1line,
+//                        tableNames
+//                    )
+//
+//                    actTable.setAdapter(adapter)
+//
+//                    // 🔥 Handle selection
+                    actTable.setOnItemClickListener { _, _, position, _ ->
+                        val selectedTable = tableList[position]
+                        selectedTableId = selectedTable.table_id
+                    }
+                    actTable.setOnFocusChangeListener { _, hasFocus ->
+                        if (!hasFocus) {
+                            val enteredName = actTable.text.toString()
+                            val index = tableList.indexOfFirst { it.table_name == enteredName }
+                            if (index != -1) {
+                                selectedTableId = tableList[index].table_id
+                            }
+                        }
+                    }
                     val adapter = ArrayAdapter(
                         requireContext(),
                         android.R.layout.simple_dropdown_item_1line,
@@ -151,10 +199,31 @@ class CreateOrderFragment : Fragment() {
 
                     actTable.setAdapter(adapter)
 
-                    // 🔥 Handle selection
-                    actTable.setOnItemClickListener { _, _, position, _ ->
-                        val selectedTable = tableList[position]
-                        selectedTableId = selectedTable.table_id
+
+                    pendingTableName?.let { tableName ->
+
+                        actTable.post {
+                            actTable.setText(tableName, false)
+
+                            // Only set ID if not already restored
+                            if (selectedTableId.isEmpty()) {
+                                val index = tableList.indexOfFirst { it.table_name == tableName }
+                                if (index != -1) {
+                                    selectedTableId = tableList[index].table_id
+                                }
+                            }
+
+                            Log.d("TABLE_DEBUG", "Restored: $tableName | ID: $selectedTableId")
+                        }
+                        parentFragmentManager.setFragmentResult(
+                            "table_data",
+                            bundleOf(
+                                "table" to tableName,
+                                "table_id" to selectedTableId
+                            )
+                        )
+
+                        pendingTableName = null
                     }
 
                 } else {

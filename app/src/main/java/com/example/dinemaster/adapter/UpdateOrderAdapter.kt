@@ -15,7 +15,8 @@ import com.example.dinemaster.model.OrderItemData
 
 
 class UpdateOrderAdapter(
-    private val items: MutableList<OrderItemData>
+    private val items: MutableList<OrderItemData>,
+    private val onDeleteClick: (OrderItemData, Int) -> Unit
 ) : RecyclerView.Adapter<UpdateOrderAdapter.FoodViewHolder>() {
 
     inner class FoodViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -38,58 +39,65 @@ class UpdateOrderAdapter(
         holder.tvQuantity.text = item.quantity.toString()
 
         // Minus button logic
+        // Minus button
         holder.btnMinus.setOnClickListener {
-            var currentQty = holder.tvQuantity.text.toString().toInt()
+
+            val currentQty = holder.tvQuantity.text.toString()
+                .toDoubleOrNull()?.toInt() ?: 0
+
             if (currentQty > 1) {
-                currentQty--
-                items[position] = item.copy(quantity = currentQty.toString().toInt())
-                holder.tvQuantity.text = currentQty.toString()
+
+                val newQty = currentQty - 1
+
+                items[position] = item.copy(quantity = newQty.toString())
+                holder.tvQuantity.text = newQty.toString()
+
             } else {
-                Toast.makeText(holder.itemView.context, "Qty cannot be less than 1", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    holder.itemView.context,
+                    "Qty cannot be less than 1",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
-
-        // Plus button logic
+        // Plus button
         holder.btnPlus.setOnClickListener {
-            var currentQty = holder.tvQuantity.text.toString().toInt()
-            currentQty++
-            items[position] = item.copy(quantity = currentQty.toString().toInt())
-            holder.tvQuantity.text = currentQty.toString()
+
+            val currentQty = holder.tvQuantity.text.toString()
+                .toDoubleOrNull()?.toInt() ?: 0
+
+            val newQty = currentQty + 1
+
+            items[position] = item.copy(quantity = newQty.toString())
+            holder.tvQuantity.text = newQty.toString()
         }
 
-        // Delete button logic
-//        holder.btnDelete.setOnClickListener {
-//            AlertDialog.Builder(holder.itemView.context)
-//                .setTitle("Delete Item")
-//                .setMessage("Are you sure you want to delete ${item.name}?")
-//                .setPositiveButton("Yes") { _, _ ->
-//                    items.removeAt(position)
-//                    notifyItemRemoved(position)
-//                    notifyItemRangeChanged(position, items.size)
-//                    Toast.makeText(holder.itemView.context, "${item.name} removed", Toast.LENGTH_SHORT).show()
-//                }
-//                .setNegativeButton("No", null)
-//                .show()
-//        }
-        // Delete button logic
         holder.btnDelete.setOnClickListener {
+
             val pos = holder.adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
+
                 val dialog = AlertDialog.Builder(holder.itemView.context)
                     .setTitle("Delete Item")
-                    .setMessage("Are you sure you want to delete ${items[pos].item_name}?")
+                    .setMessage("Remove ${items[pos].item_name}?")
                     .setPositiveButton("Delete") { _, _ ->
-                        val removedItem = items[pos]
-                        items.removeAt(pos)
-                        notifyItemRemoved(pos)
-                        Toast.makeText(holder.itemView.context, "${removedItem.item_name} removed", Toast.LENGTH_SHORT).show()
+
+                        // 🔥 Instead of removing → set qty = 0
+                        val item = items[pos]
+                        items[pos] = item.copy(quantity = "0")
+
+                        notifyItemChanged(pos)
+
+                        Toast.makeText(
+                            holder.itemView.context,
+                            "${item.item_name} marked for removal",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                     .setNegativeButton("Cancel", null)
                     .create()
 
                 dialog.show()
-
-                // Change button colors
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                     .setTextColor(ContextCompat.getColor(holder.itemView.context, android.R.color.holo_red_dark))
                 dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
